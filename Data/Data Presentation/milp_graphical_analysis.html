@@ -1,0 +1,228 @@
+
+<!DOCTYPE html>
+<h2 class="sr-only">Mixed Integer Linear Programming graphical analysis — feasible region, constraints, and optimal solution for a two-variable MILP problem</h2>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);color:var(--text-primary);background:transparent}
+.wrap{padding:1.5rem 0}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.5rem}
+.kpi{background:var(--surface-1);border-radius:var(--radius);padding:.75rem 1rem}
+.kpi-label{font-size:12px;color:var(--text-muted);margin-bottom:4px}
+.kpi-val{font-size:20px;font-weight:500;color:var(--text-primary)}
+.kpi-sub{font-size:11px;color:var(--text-secondary);margin-top:2px}
+.panel{background:var(--surface-1);border:0.5px solid var(--border);border-radius:12px;padding:1rem 1.25rem;margin-bottom:1rem}
+.panel-title{font-size:13px;font-weight:500;color:var(--text-secondary);margin-bottom:.75rem;text-transform:uppercase;letter-spacing:.04em}
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:.75rem}
+.leg-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-secondary)}
+.leg-swatch{width:14px;height:4px;border-radius:2px}
+.controls{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:1rem;align-items:flex-end}
+.ctrl-group{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--text-secondary)}
+.ctrl-group input[type=range]{width:120px}
+.ctrl-group span{font-weight:500;color:var(--text-primary)}
+.chart-wrap{position:relative;width:100%;height:420px}
+.sol-badge{display:inline-flex;align-items:center;gap:6px;background:var(--bg-success);color:var(--text-success);border-radius:var(--radius);padding:4px 10px;font-size:12px;font-weight:500}
+.iter-table{width:100%;border-collapse:collapse;font-size:13px}
+.iter-table th{text-align:left;padding:6px 8px;color:var(--text-muted);font-weight:400;border-bottom:0.5px solid var(--border)}
+.iter-table td{padding:6px 8px;border-bottom:0.5px solid var(--border);color:var(--text-secondary)}
+.iter-table tr.opt td{color:var(--text-primary);font-weight:500;background:var(--bg-success)}
+</style>
+
+<div class="wrap">
+
+<div class="kpi-row">
+  <div class="kpi"><div class="kpi-label">Objective value (max)</div><div class="kpi-val" id="kv-obj">14</div><div class="kpi-sub">Z = 3x₁ + 2x₂</div></div>
+  <div class="kpi"><div class="kpi-label">Optimal x₁</div><div class="kpi-val" id="kv-x1">2</div><div class="kpi-sub">Integer variable</div></div>
+  <div class="kpi"><div class="kpi-label">Optimal x₂</div><div class="kpi-val" id="kv-x2">4</div><div class="kpi-sub">Integer variable</div></div>
+  <div class="kpi"><div class="kpi-label">LP relaxation Z</div><div class="kpi-val" id="kv-lp">15.0</div><div class="kpi-sub">Integrality gap</div></div>
+</div>
+
+<div class="panel">
+  <div class="panel-title">Feasible region & optimal solution</div>
+  <div class="controls">
+    <div class="ctrl-group"><label>c₁ (x₁ coeff) <span id="lc1">3</span></label><input type="range" id="sc1" min="1" max="6" step="1" value="3"></div>
+    <div class="ctrl-group"><label>c₂ (x₂ coeff) <span id="lc2">2</span></label><input type="range" id="sc2" min="1" max="6" step="1" value="2"></div>
+    <div class="ctrl-group"><label>b₁ RHS <span id="lb1">8</span></label><input type="range" id="sb1" min="4" max="14" step="1" value="8"></div>
+    <div class="ctrl-group"><label>b₂ RHS <span id="lb2">10</span></label><input type="range" id="sb2" min="4" max="16" step="1" value="10"></div>
+  </div>
+  <div class="legend">
+    <div class="leg-item"><div class="leg-swatch" style="background:#2a78d6;height:14px;width:14px;border-radius:2px;opacity:.18"></div>LP feasible region</div>
+    <div class="leg-item"><div class="leg-swatch" style="background:#2a78d6;height:2px"></div>Constraint 1: 2x₁+x₂≤b₁</div>
+    <div class="leg-item"><div class="leg-swatch" style="background:#1baf7a;height:2px"></div>Constraint 2: x₁+2x₂≤b₂</div>
+    <div class="leg-item"><div class="leg-swatch" style="background:#eda100;height:2px;border-top:2px dashed #eda100"></div>Objective Z (iso-profit)</div>
+    <div class="leg-item"><div class="leg-swatch" style="background:#e34948;height:10px;width:10px;border-radius:50%"></div>LP optimum</div>
+    <div class="leg-item"><div class="leg-swatch" style="background:#1baf7a;height:10px;width:10px;border-radius:50%"></div>MILP optimum</div>
+    <div class="leg-item"><div class="leg-swatch" style="background:#888;height:6px;width:6px;border-radius:50%"></div>Integer lattice</div>
+  </div>
+  <div class="chart-wrap"><canvas id="chart" role="img" aria-label="MILP feasible region showing constraints, LP relaxation optimum, and integer optimal solution">A graphical representation of a MILP problem with two constraints and the optimal integer solution.</canvas></div>
+</div>
+
+<div class="panel">
+  <div class="panel-title">Branch-and-bound enumeration</div>
+  <table class="iter-table">
+    <thead><tr><th>Node</th><th>x₁</th><th>x₂</th><th>Type</th><th>Z value</th><th>Status</th></tr></thead>
+    <tbody id="bnb-body"></tbody>
+  </table>
+</div>
+
+<div class="panel">
+  <div class="panel-title">Mathematical formulation</div>
+  <div style="font-size:13px;color:var(--text-secondary);line-height:2">
+    <div><strong style="color:var(--text-primary)">Maximize:</strong> &nbsp; Z = c₁x₁ + c₂x₂</div>
+    <div><strong style="color:var(--text-primary)">Subject to:</strong></div>
+    <div style="padding-left:1.5rem">2x₁ + x₂ &le; b₁ &nbsp; (Resource A)</div>
+    <div style="padding-left:1.5rem">x₁ + 2x₂ &le; b₂ &nbsp; (Resource B)</div>
+    <div style="padding-left:1.5rem">x₁, x₂ &ge; 0</div>
+    <div style="padding-left:1.5rem">x₁, x₂ &isin; &#8484; &nbsp; <span style="color:var(--text-muted)">(integer constraint — key difference from LP)</span></div>
+  </div>
+</div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+let chart;
+const isDark = matchMedia('(prefers-color-scheme:dark)').matches;
+const gridCol = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.07)';
+const textCol = isDark ? '#c3c2b7' : '#52514e';
+
+function solveLP(c1,c2,b1,b2){
+  const pts=[[0,0],[b1/2,0],[0,b1],[0,b2/2],[b2,0]];
+  const xi=(2*b1-b2)/3, yi=(2*b2-b1)/3;
+  if(xi>=0&&yi>=0) pts.push([xi,yi]);
+  let best=null,bz=-Infinity;
+  pts.forEach(([x,y])=>{
+    if(2*x+y<=b1+1e-9&&x+2*y<=b2+1e-9&&x>=0&&y>=0){
+      const z=c1*x+c2*y;
+      if(z>bz){bz=z;best=[x,y];}
+    }
+  });
+  return {x:best[0],y:best[1],z:bz};
+}
+
+function solveMILP(c1,c2,b1,b2){
+  let best=null,bz=-Infinity;
+  const M=Math.ceil(Math.max(b1/2,b2))+2;
+  for(let x=0;x<=M;x++) for(let y=0;y<=M;y++){
+    if(2*x+y<=b1&&x+2*y<=b2){
+      const z=c1*x+c2*y;
+      if(z>bz){bz=z;best=[x,y];}
+    }
+  }
+  return {x:best[0],y:best[1],z:bz};
+}
+
+function buildBnB(c1,c2,b1,b2,milpX,milpY,lpZ){
+  const lp=solveLP(c1,c2,b1,b2);
+  const rows=[
+    {node:'LP root',x1:lp.x.toFixed(1),x2:lp.y.toFixed(1),type:'LP relax',z:lpZ.toFixed(1),status:'Bound',opt:false},
+    {node:'Branch x₁≤'+Math.floor(lp.x),x1:Math.floor(lp.x),x2:'—',type:'Branch',z:(c1*Math.floor(lp.x)+c2*Math.min(lp.y,(b2-Math.floor(lp.x))/2)).toFixed(1),status:'Explore',opt:false},
+    {node:'Branch x₁≥'+Math.ceil(lp.x),x1:Math.ceil(lp.x),x2:'—',type:'Branch',z:(c1*Math.ceil(lp.x)+c2*Math.max(0,(b1-2*Math.ceil(lp.x)))).toFixed(1),status:'Prune',opt:false},
+    {node:'Integer node',x1:milpX,x2:milpY,type:'Integer',z:(c1*milpX+c2*milpY).toFixed(0),status:'Optimal',opt:true},
+  ];
+  const tbody=document.getElementById('bnb-body');
+  tbody.innerHTML='';
+  rows.forEach(r=>{
+    const tr=document.createElement('tr');
+    if(r.opt) tr.className='opt';
+    tr.innerHTML=`<td>${r.node}</td><td>${r.x1}</td><td>${r.x2}</td><td>${r.type}</td><td>${r.z}</td><td>${r.status}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function buildFeasiblePolygon(b1,b2,size){
+  const pts=[];
+  pts.push({x:0,y:0});
+  const xA=b1/2; if(xA<=size) pts.push({x:xA,y:0});
+  else pts.push({x:size,y:0});
+  const xi=(2*b1-b2)/3,yi=(2*b2-b1)/3;
+  if(xi>=0&&yi>=0&&xi<=size&&yi<=size) pts.push({x:xi,y:yi});
+  const yB=b2/2; if(yB<=size) pts.push({x:0,y:yB});
+  else pts.push({x:0,y:size});
+  return pts;
+}
+
+function makeLattice(b1,b2){
+  const pts=[];
+  const M=Math.ceil(Math.max(b1/2,b2))+1;
+  for(let x=0;x<=M;x++) for(let y=0;y<=M;y++){
+    if(2*x+y<=b1&&x+2*y<=b2) pts.push({x,y});
+  }
+  return pts;
+}
+
+function isoLine(c1,c2,z,size){
+  if(c2===0) return [{x:z/c1,y:0},{x:z/c1,y:size}];
+  return [{x:0,y:z/c2},{x:size,y:(z-c1*size)/c2}];
+}
+
+function update(){
+  const c1=+document.getElementById('sc1').value;
+  const c2=+document.getElementById('sc2').value;
+  const b1=+document.getElementById('sb1').value;
+  const b2=+document.getElementById('sb2').value;
+  document.getElementById('lc1').textContent=c1;
+  document.getElementById('lc2').textContent=c2;
+  document.getElementById('lb1').textContent=b1;
+  document.getElementById('lb2').textContent=b2;
+
+  const lp=solveLP(c1,c2,b1,b2);
+  const milp=solveMILP(c1,c2,b1,b2);
+  const gap=(lp.z-milp.z).toFixed(1);
+
+  document.getElementById('kv-obj').textContent=milp.z;
+  document.getElementById('kv-x1').textContent=milp.x;
+  document.getElementById('kv-x2').textContent=milp.y;
+  document.getElementById('kv-lp').textContent=lp.z.toFixed(1)+' (gap: '+gap+')';
+
+  buildBnB(c1,c2,b1,b2,milp.x,milp.y,lp.z);
+
+  const size=Math.ceil(Math.max(b1,b2/2,b2,b1/2))+1;
+  const poly=buildFeasiblePolygon(b1,b2,size);
+  const lattice=makeLattice(b1,b2);
+  const iso=isoLine(c1,c2,milp.z,size);
+
+  const c1pts=[{x:0,y:b1},{x:b1/2,y:0}];
+  const c2pts=[{x:0,y:b2/2},{x:b2,y:0}];
+
+  const datasets=[
+    {label:'LP feasible region',data:poly,fill:true,backgroundColor:'rgba(42,120,214,0.13)',borderColor:'transparent',pointRadius:0,tension:0,showLine:true,order:5},
+    {label:'Constraint 1',data:c1pts,fill:false,borderColor:'#2a78d6',borderWidth:2,pointRadius:0,tension:0,showLine:true,order:4},
+    {label:'Constraint 2',data:c2pts,fill:false,borderColor:'#1baf7a',borderWidth:2,pointRadius:0,tension:0,showLine:true,order:3},
+    {label:'Integer lattice',data:lattice,showLine:false,pointRadius:4,pointBackgroundColor:'rgba(136,135,128,0.5)',pointBorderWidth:0,order:2},
+    {label:'Iso-profit line',data:iso,fill:false,borderColor:'#eda100',borderWidth:1.5,borderDash:[6,4],pointRadius:0,tension:0,showLine:true,order:1},
+    {label:'LP optimum',data:[{x:lp.x,y:lp.y}],showLine:false,pointRadius:7,pointBackgroundColor:'#e34948',pointBorderColor:'#fff',pointBorderWidth:2,order:0},
+    {label:'MILP optimum',data:[{x:milp.x,y:milp.y}],showLine:false,pointRadius:9,pointBackgroundColor:'#1baf7a',pointBorderColor:'#fff',pointBorderWidth:2,order:-1},
+  ];
+
+  if(chart){
+    chart.data.datasets=datasets;
+    chart.options.scales.x.max=size;
+    chart.options.scales.y.max=size;
+    chart.update();
+  } else {
+    chart=new Chart(document.getElementById('chart'),{
+      type:'scatter',
+      data:{datasets},
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        animation:{duration:300},
+        plugins:{
+          legend:{display:false},
+          tooltip:{callbacks:{label:ctx=>{
+            const d=ctx.dataset.label;
+            return d+': ('+ctx.parsed.x.toFixed(1)+', '+ctx.parsed.y.toFixed(1)+')';
+          }}}
+        },
+        scales:{
+          x:{min:0,max:size,title:{display:true,text:'x₁',color:textCol},grid:{color:gridCol},ticks:{color:textCol,stepSize:1}},
+          y:{min:0,max:size,title:{display:true,text:'x₂',color:textCol},grid:{color:gridCol},ticks:{color:textCol,stepSize:1}}
+        }
+      }
+    });
+  }
+}
+
+['sc1','sc2','sb1','sb2'].forEach(id=>document.getElementById(id).addEventListener('input',update));
+update();
+</script>

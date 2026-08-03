@@ -1,0 +1,142 @@
+[
+     {
+          "Number of Clusters":1,
+          "GMM Fit Time":0.001736784,
+          "BIC Mean Test Score":2748.4637299228,
+          "BIC Std. Test Score":21.7853670094,
+          "BIC Rank":19
+     },
+     {
+          "Number of Clusters":2,
+          "GMM Fit Time":0.0108444214,
+          "BIC Mean Test Score":2763.9569386801,
+          "BIC Std. Test Score":52.3248365689,
+          "BIC Rank":18
+     },
+     {
+          "Number of Clusters":3,
+          "GMM Fit Time":0.016549921,
+          "BIC Mean Test Score":2664.3886087166,
+          "BIC Std. Test Score":89.5024901467,
+          "BIC Rank":20
+     },
+     {
+          "Number of Clusters":4,
+          "GMM Fit Time":0.0251928329,
+          "BIC Mean Test Score":2813.714383993,
+          "BIC Std. Test Score":149.9532848822,
+          "BIC Rank":16
+     },
+     {
+          "Number of Clusters":5,
+          "GMM Fit Time":0.0149492741,
+          "BIC Mean Test Score":2787.5202534308,
+          "BIC Std. Test Score":86.6938997288,
+          "BIC Rank":17
+     },
+     {
+          "Number of Clusters":6,
+          "GMM Fit Time":0.022475481,
+          "BIC Mean Test Score":2814.2267095179,
+          "BIC Std. Test Score":128.9492110408,
+          "BIC Rank":15
+     },
+     {
+          "Number of Clusters":7,
+          "GMM Fit Time":0.0232263088,
+          "BIC Mean Test Score":2974.5520340513,
+          "BIC Std. Test Score":129.6715910755,
+          "BIC Rank":14
+     },
+     {
+          "Number of Clusters":8,
+          "GMM Fit Time":0.0237047672,
+          "BIC Mean Test Score":2991.5619610186,
+          "BIC Std. Test Score":96.0503625202,
+          "BIC Rank":13
+     },
+     {
+          "Number of Clusters":9,
+          "GMM Fit Time":0.026119709,
+          "BIC Mean Test Score":3152.3062125503,
+          "BIC Std. Test Score":123.7224008795,
+          "BIC Rank":11
+     },
+     {
+          "Number of Clusters":10,
+          "GMM Fit Time":0.036772871,
+          "BIC Mean Test Score":3055.0249103914,
+          "BIC Std. Test Score":189.1845175393,
+          "BIC Rank":12
+     },
+     {
+          "Number of Clusters":11,
+          "GMM Fit Time":0.0271282673,
+          "BIC Mean Test Score":3224.4634934254,
+          "BIC Std. Test Score":147.2412852594,
+          "BIC Rank":10
+     },
+     {
+          "Number of Clusters":12,
+          "GMM Fit Time":0.0398884773,
+          "BIC Mean Test Score":3341.0922668485,
+          "BIC Std. Test Score":62.8238164042,
+          "BIC Rank":8
+     },
+     {
+          "Number of Clusters":13,
+          "GMM Fit Time":0.0326847553,
+          "BIC Mean Test Score":3291.9545387862,
+          "BIC Std. Test Score":131.1918364018,
+          "BIC Rank":9
+     },
+     {
+          "Number of Clusters":14,
+          "GMM Fit Time":0.0431917667,
+          "BIC Mean Test Score":3400.1516766315,
+          "BIC Std. Test Score":158.7268772789,
+          "BIC Rank":7
+     },
+     {
+          "Number of Clusters":15,
+          "GMM Fit Time":0.0432825565,
+          "BIC Mean Test Score":3559.7663715591,
+          "BIC Std. Test Score":164.2402095065,
+          "BIC Rank":6
+     },
+     {
+          "Number of Clusters":16,
+          "GMM Fit Time":0.0400609493,
+          "BIC Mean Test Score":3610.9004209648,
+          "BIC Std. Test Score":91.1719791612,
+          "BIC Rank":5
+     },
+     {
+          "Number of Clusters":17,
+          "GMM Fit Time":0.0421969891,
+          "BIC Mean Test Score":3692.021988302,
+          "BIC Std. Test Score":190.0556895604,
+          "BIC Rank":4
+     },
+     {
+          "Number of Clusters":18,
+          "GMM Fit Time":0.0642964363,
+          "BIC Mean Test Score":3796.8981762336,
+          "BIC Std. Test Score":141.6362845426,
+          "BIC Rank":2
+     },
+     {
+          "Number of Clusters":19,
+          "GMM Fit Time":0.0471818447,
+          "BIC Mean Test Score":3788.4985564928,
+          "BIC Std. Test Score":212.7840017819,
+          "BIC Rank":3
+     },
+     {
+          "Number of Clusters":20,
+          "GMM Fit Time":0.0402906895,
+          "BIC Mean Test Score":3959.2665638576,
+          "BIC Std. Test Score":89.0953625685,
+          "BIC Rank":1
+     }
+]
